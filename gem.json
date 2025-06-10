@@ -1,0 +1,29 @@
+{
+    "gem_name": "BehaviorTree",
+    "version": "1.0.0",
+    "display_name": "Behavior Tree",
+    "license": "Apache-2.0",
+    "license_url": "https://opensource.org/license/apache-2-0",
+    "origin": "Ross Charles C.",
+    "origin_url": "",
+    "type": "Code",
+    "summary": "A simple behavior tree implementation.",
+    "canonical_tags": [
+        "Gem"
+    ],
+    "user_tags": [
+        "AI",
+        "BehaviorTree"
+    ],
+    "platforms": [
+        ""
+    ],
+    "icon_path": "",
+    "requirements": "",
+    "documentation_url": "",
+    "dependencies": [],
+    "repo_uri": "",
+    "compatible_engines": [],
+    "engine_api_dependencies": [],
+    "restricted": "BehaviorTree"
+}
