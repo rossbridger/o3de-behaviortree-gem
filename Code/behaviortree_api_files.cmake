@@ -1,5 +1,5 @@
 
 set(FILES
-    Include/BehaviorTree/BehaviorTreeBus.h
+    Include/BehaviorTree/BehaviorTreeSystemBus.h
     Include/BehaviorTree/BehaviorTreeTypeIds.h
 )

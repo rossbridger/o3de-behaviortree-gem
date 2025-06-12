@@ -5,6 +5,7 @@
 
 #include <AzCore/Serialization/SerializeContext.h>
 
+
 namespace BehaviorTree
 {
     AZ_COMPONENT_IMPL(BehaviorTreeSystemComponent, "BehaviorTreeSystemComponent",
@@ -32,6 +33,8 @@ namespace BehaviorTree
 
     void BehaviorTreeSystemComponent::GetRequiredServices([[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& required)
     {
+        required.push_back(AZ_CRC_CE("AssetDatabaseService"));
+        required.push_back(AZ_CRC_CE("AssetCatalogService"));
     }
 
     void BehaviorTreeSystemComponent::GetDependentServices([[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& dependent)
@@ -60,18 +63,12 @@ namespace BehaviorTree
 
     void BehaviorTreeSystemComponent::Activate()
     {
-        BehaviorTreeRequestBus::Handler::BusConnect();
-        AZ::TickBus::Handler::BusConnect();
+        BehaviorTreeSystemRequestBus::Handler::BusConnect();
     }
 
     void BehaviorTreeSystemComponent::Deactivate()
     {
-        AZ::TickBus::Handler::BusDisconnect();
-        BehaviorTreeRequestBus::Handler::BusDisconnect();
-    }
-
-    void BehaviorTreeSystemComponent::OnTick([[maybe_unused]] float deltaTime, [[maybe_unused]] AZ::ScriptTimePoint time)
-    {
+        BehaviorTreeSystemRequestBus::Handler::BusDisconnect();
     }
 
 } // namespace BehaviorTree

@@ -1,16 +1,21 @@
-
 #pragma once
 
 #include <AzCore/Component/Component.h>
-#include <AzCore/Component/TickBus.h>
-#include <BehaviorTree/BehaviorTreeBus.h>
+#include <BehaviorTree/BehaviorTreeSystemBus.h>
+
+namespace AzFramework
+{
+    template<typename AssetType>
+	class GenericAssetHandler;
+}
 
 namespace BehaviorTree
 {
+    class BehaviorTreeAsset;
+
     class BehaviorTreeSystemComponent
         : public AZ::Component
-        , protected BehaviorTreeRequestBus::Handler
-        , public AZ::TickBus::Handler
+        , protected BehaviorTreeSystemRequestBus::Handler
     {
     public:
         AZ_COMPONENT_DECL(BehaviorTreeSystemComponent);
@@ -27,7 +32,7 @@ namespace BehaviorTree
 
     protected:
         ////////////////////////////////////////////////////////////////////////
-        // BehaviorTreeRequestBus interface implementation
+        // BehaviorTreeSystemRequestBus interface implementation
 
         ////////////////////////////////////////////////////////////////////////
 
@@ -37,11 +42,8 @@ namespace BehaviorTree
         void Activate() override;
         void Deactivate() override;
         ////////////////////////////////////////////////////////////////////////
-
-        ////////////////////////////////////////////////////////////////////////
-        // AZTickBus interface implementation
-        void OnTick(float deltaTime, AZ::ScriptTimePoint time) override;
-        ////////////////////////////////////////////////////////////////////////
+    private:
+        AzFramework::GenericAssetHandler<BehaviorTreeAsset>* m_behaviorTreeAssetHandler;
     };
 
 } // namespace BehaviorTree

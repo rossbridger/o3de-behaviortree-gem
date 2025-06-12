@@ -8,11 +8,11 @@
 
 namespace BehaviorTree
 {
-    class BehaviorTreeRequests
+    class BehaviorTreeSystemRequests
     {
     public:
-        AZ_RTTI(BehaviorTreeRequests, BehaviorTreeRequestsTypeId);
-        virtual ~BehaviorTreeRequests() = default;
+        AZ_RTTI(BehaviorTreeSystemRequests, BehaviorTreeRequestsTypeId);
+        virtual ~BehaviorTreeSystemRequests() = default;
         // Put your public methods here
     };
 
@@ -27,7 +27,7 @@ namespace BehaviorTree
         //////////////////////////////////////////////////////////////////////////
     };
 
-    using BehaviorTreeRequestBus = AZ::EBus<BehaviorTreeRequests, BehaviorTreeBusTraits>;
-    using BehaviorTreeInterface = AZ::Interface<BehaviorTreeRequests>;
+    using BehaviorTreeSystemRequestBus = AZ::EBus<BehaviorTreeSystemRequests, BehaviorTreeBusTraits>;
+    using BehaviorTreeInterface = AZ::Interface<BehaviorTreeSystemRequests>;
 
 } // namespace BehaviorTree
