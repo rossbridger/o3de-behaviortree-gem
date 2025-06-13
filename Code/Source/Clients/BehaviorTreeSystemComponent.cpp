@@ -4,6 +4,8 @@
 #include <BehaviorTree/BehaviorTreeTypeIds.h>
 
 #include <AzCore/Serialization/SerializeContext.h>
+#include <BehaviorTree/BehaviorNode.h>
+#include "BehaviorTreeComponent.h"
 
 
 namespace BehaviorTree
@@ -23,12 +25,12 @@ namespace BehaviorTree
 
     void BehaviorTreeSystemComponent::GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided)
     {
-        provided.push_back(AZ_CRC_CE("BehaviorTreeService"));
+        provided.push_back(AZ_CRC_CE("BehaviorTreeSystemService"));
     }
 
     void BehaviorTreeSystemComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible)
     {
-        incompatible.push_back(AZ_CRC_CE("BehaviorTreeService"));
+        incompatible.push_back(AZ_CRC_CE("BehaviorTreeSystemService"));
     }
 
     void BehaviorTreeSystemComponent::GetRequiredServices([[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& required)
