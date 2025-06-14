@@ -1,7 +1,7 @@
 #pragma once
 
 #include <AzCore/Serialization/EditContext.h>
-#include <AzCore/Entity/EntityId.h>
+#include <AzCore/Component/EntityId.h>
 
 namespace BehaviorTree
 {
@@ -10,25 +10,46 @@ namespace BehaviorTree
         Invalid,
         Running,
         Success,
-        Failure
+        Failure,
+        Aborted,
     };
 
     class Node
     {
     public:
 
+        // stores runtime state
         class Task
         {
         public:
-            Task(Node& node, AZ::EntityId entityId) {}
-            virtual void OnInit() = 0;
-            virtual Status OnUpdate(float deltaTime) = 0;
-            virtual void OnTerminate(Status status) = 0;
-        private:
+            Task(Node& node, [[maybe_unused]] AZ::EntityId entityId)
+                : m_node(&node)
+                , m_status(Status::Invalid) {}
+            virtual void OnInit(AZ::EntityId entityId) = 0;
+            virtual Status OnUpdate(AZ::EntityId entityId, float deltaTime) = 0;
+            virtual void OnTerminate(AZ::EntityId entityId, Status status) = 0;
+
+            Status OnTick(AZ::EntityId entityId, float deltaTime)
+            {
+                if (m_status == Status::Invalid)
+                {
+                    OnInit(entityId);
+                }
+                m_status = OnUpdate(entityId, deltaTime);
+                if (m_status != Status::Running)
+                {
+                    OnTerminate(entityId, m_status);
+                }
+                return m_status;
+            }
+
+            const Status GetStatus() const { return m_status; }
+        protected:
             Node* m_node;
+            Status m_status = Status::Invalid;
         };
 
-        AZ_TYPE_INFO(Node, "{0CD4A186-5B8D-45E4-9795-01B1373F8A8F}");
+        AZ_TYPE_INFO(Node, "{D3BC61F3-489E-4783-B3B0-1A9E773A9EA3}");
         static void Reflect(AZ::ReflectContext* context)
         {
             if (auto serializeContext = azrtti_cast<AZ::SerializeContext*>(context))
@@ -48,8 +69,9 @@ namespace BehaviorTree
             }
         }
 
+        /* Node should handle managing tasks memory. Theoretically the task can be shared between entities for some "hivemind" effects, so the component should not free the task itself */
         virtual Task* CreateTask(AZ::EntityId entityId) = 0;
-        virtual void DestroyTask(Task* task) = 0;
+        virtual void DestroyTask(AZ::EntityId entityId, Task* task) = 0;
         virtual ~Node() {};
 
     private:

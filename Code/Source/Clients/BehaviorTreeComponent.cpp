@@ -1,5 +1,6 @@
+#include <BehaviorTree/BehaviorTreeComponentBus.h>
 #include "BehaviorTreeAsset.h"
-#include "BehaviorTreeComponent.h"
+#include "Clients/BehaviorTreeComponent.h"
 
 namespace BehaviorTree
 {
@@ -30,37 +31,38 @@ namespace BehaviorTree
         AZ::TickBus::Handler::BusDisconnect();
     }
 
-    void BehaviorTreeComponent::OnTick(float deltaTime, AZ::ScriptTimePoint time)
+    void BehaviorTreeComponent::OnTick(float deltaTime, [[maybe_unused]] AZ::ScriptTimePoint time)
     {
         if (m_currentTask == nullptr)
         {
             return;
         }
-        if (m_currentStatus == Status::Invalid)
+        m_currentStatus = m_currentTask->OnTick(GetEntityId(), deltaTime);
+        if (m_currentStatus == Status::Success || m_currentStatus == Status::Failure)
         {
-            m_currentTask->OnInit();
-        }
-        m_currentStatus = m_currentTask->OnUpdate();
-        if (m_currentStatus != Status::Running)
-        {
-            m_currentTask->OnTerminate(m_currentStatus);
+            BehaviorTreeNotificationBus::Event(GetEntityId(), &BehaviorTreeNotificationBus::Events::OnBehaviorTreeTaskComplete, m_currentStatus);
+            // oneshot task behavior, maybe change this later
+            m_behaviorTreeAsset->GetRootNode()->DestroyTask(GetEntityId(), m_currentTask);
+            m_currentTask = nullptr;
         }
     }
 
     void BehaviorTreeComponent::EditorSetPrimaryAsset(const AZ::Data::AssetId& assetId)
     {
+        m_behaviorTreeAsset.Create(assetId);
     }
 
     void BehaviorTreeComponent::OnAssetReady(AZ::Data::Asset<AZ::Data::AssetData> asset)
     {
         if (BehaviorTreeAsset* behaviorTreeAsset = azrtti_cast<BehaviorTreeAsset*>(asset.Get()))
         {
-            m_currentTask = behaviorTreeAsset->GetRootNode()->CreateTask();
+            m_currentTask = behaviorTreeAsset->GetRootNode()->CreateTask(GetEntityId());
         }
     }
     void BehaviorTreeComponent::OnAssetReloaded(AZ::Data::Asset<AZ::Data::AssetData> asset)
     {
-        m_behaviorTreeAsset->GetRootNode()->DestroyTask(m_currentTask);
+        m_currentTask->OnTerminate(GetEntityId(), Status::Aborted);
+        m_behaviorTreeAsset->GetRootNode()->DestroyTask(GetEntityId(), m_currentTask);
         m_currentTask = nullptr;
         m_behaviorTreeAsset = asset;
         if (asset.IsReady())
@@ -71,7 +73,8 @@ namespace BehaviorTree
 
     void BehaviorTreeComponent::OnAssetUnloaded(const AZ::Data::AssetId assetId, const AZ::Data::AssetType assetType)
     {
-        m_behaviorTreeAsset->GetRootNode()->DestroyTask(m_currentTask);
+        m_currentTask->OnTerminate(GetEntityId(), Status::Aborted);
+        m_behaviorTreeAsset->GetRootNode()->DestroyTask(GetEntityId(), m_currentTask);
         m_currentTask = nullptr;
     }
 }

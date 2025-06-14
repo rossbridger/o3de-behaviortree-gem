@@ -5,6 +5,7 @@
 #include <BehaviorTree/BehaviorTreeTypeIds.h>
 
 #include <Clients/BehaviorTreeSystemComponent.h>
+#include <Clients/BehaviorTreeComponent.h>
 
 namespace BehaviorTree
 {
@@ -21,6 +22,7 @@ namespace BehaviorTree
         // This happens through the [MyComponent]::Reflect() function.
         m_descriptors.insert(m_descriptors.end(), {
             BehaviorTreeSystemComponent::CreateDescriptor(),
+            BehaviorTreeComponent::CreateDescriptor(),
             });
     }
 

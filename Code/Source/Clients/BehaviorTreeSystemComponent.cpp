@@ -4,8 +4,10 @@
 #include <BehaviorTree/BehaviorTreeTypeIds.h>
 
 #include <AzCore/Serialization/SerializeContext.h>
-#include <BehaviorTree/BehaviorNode.h>
-#include "BehaviorTreeComponent.h"
+#include <AzFramework/Asset/GenericAssetHandler.h>
+#include <BehaviorTree/Node.h>
+#include "Behaviors/Composite.h"
+#include "Clients/BehaviorTreeComponent.h"
 
 
 namespace BehaviorTree
@@ -15,6 +17,8 @@ namespace BehaviorTree
 
     void BehaviorTreeSystemComponent::Reflect(AZ::ReflectContext* context)
     {
+        Node::Reflect(context);
+        Composite::Reflect(context);
         if (auto serializeContext = azrtti_cast<AZ::SerializeContext*>(context))
         {
             serializeContext->Class<BehaviorTreeSystemComponent, AZ::Component>()
@@ -66,10 +70,14 @@ namespace BehaviorTree
     void BehaviorTreeSystemComponent::Activate()
     {
         BehaviorTreeSystemRequestBus::Handler::BusConnect();
+        m_behaviorTreeAssetHandler = new AzFramework::GenericAssetHandler<BehaviorTreeAsset>("Buildable Catalog", "Other", "buildables", AZ::AzTypeInfo<BehaviorTreeComponent>::Uuid(), nullptr, AZ::DataStream::ST_JSON);
+        m_behaviorTreeAssetHandler->Register();
     }
 
     void BehaviorTreeSystemComponent::Deactivate()
     {
+        m_behaviorTreeAssetHandler->Unregister();
+        delete m_behaviorTreeAssetHandler;
         BehaviorTreeSystemRequestBus::Handler::BusDisconnect();
     }
 

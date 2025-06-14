@@ -2,6 +2,11 @@
     "Amazon": {
         "AssetProcessor": {
             "Settings": {
+                "RC BehaviorTreeAsset": {
+                    "glob": "*.bt",
+                    "params": "copy",
+                    "productAssetType": "{B1959000-F10F-4563-91AE-18C04BDCD982}"
+                },
                 "ScanFolder BehaviorTree/Assets": {
                     "watch": "@GEMROOT:BehaviorTree@/Assets",
                     "recursive": 1,

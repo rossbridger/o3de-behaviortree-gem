@@ -14,7 +14,7 @@ namespace BehaviorTree
         : public AZ::Data::AssetData
     {
     public:
-        AZ_RTTI(BehaviorTreeAsset, "{C7262D20-2181-49CE-A2F9-8964F418F497}", AZ::Data::AssetData);
+        AZ_RTTI(BehaviorTreeAsset, "{B1959000-F10F-4563-91AE-18C04BDCD982}", AZ::Data::AssetData);
 
         static void Reflect(AZ::ReflectContext* context)
         {
